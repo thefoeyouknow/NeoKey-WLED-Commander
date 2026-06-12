@@ -18,9 +18,12 @@ Press a key → your WLED lights instantly switch to the assigned preset. Each k
 - **Boot-up KITT animation** — A red scanner sweep plays while the device connects to Wi-Fi.
 - **Captive portal setup** — On first boot (or factory reset), an on-device Wi-Fi hotspot walks you through configuration with a mobile-friendly web UI — no coding required.
 - **Background web dashboard** — After setup, visit `http://wled-commander.local` to reconfigure WLED targets, adjust brightness, and change animation styles without rebooting.
-- **Over-the-Air updates** — The device checks GitHub daily for new firmware. A gentle cyan pulse on Key 0 lets you know an update is available. Long-press to install, short-press to dismiss for 48 hours.
+- **Visual Keymapper** — Map each key to a specific WLED preset. Use the **Auto-Map** feature to dynamically pull the lowest 4 presets, and assign **Custom Labels** that appear right on the dashboard keys!
+- **Over-the-Air updates** — The device checks GitHub daily for new firmware. A cyan pulse on Key 0 means an update is available. Long-press to install, short-press to dismiss for 48 hours.
 - **Factory reset** — Hold Key 0 + Key 3 at boot for 3 seconds to wipe all settings and re-enter the setup portal.
 - **Serial diagnostics** — Full serial console with `status`, `help`, `scan`, `heap`, and `key N` commands for debugging.
+
+> 📖 **Need help setting up?** Read the comprehensive **[User Guide](USER_GUIDE.md)**!
 
 ---
 
@@ -68,7 +71,7 @@ Download the latest `firmware_v*.bin` from the [Releases](https://github.com/the
 
 ### 3. Assign Presets
 
-The setup portal lets you map each of the 4 keys to any WLED preset ID. The device will fetch the color of each preset automatically.
+The setup portal lets you map each of the 4 keys to any WLED preset ID. The device will fetch the color and name of each preset automatically. Check out the **[User Guide](USER_GUIDE.md)** for detailed mapping instructions.
 
 ---
 

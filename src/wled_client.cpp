@@ -83,7 +83,7 @@ bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
     }
 
     // Assign label from WLED if not customized by user
-    if (presetLabelsOut[i].isEmpty() && preset.containsKey("n")) {
+    if (presetLabelsOut[i].isEmpty() && preset["n"].is<const char*>()) {
       presetLabelsOut[i] = preset["n"].as<String>();
     } else if (presetLabelsOut[i].isEmpty()) {
       presetLabelsOut[i] = "P" + String(presetIdsOut[i]);

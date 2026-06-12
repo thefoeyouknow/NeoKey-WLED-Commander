@@ -251,6 +251,9 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
   <div class="nav-item" onclick="nav('network')">Network</div>
   <div class="nav-item" onclick="nav('system')">System</div>
   <div class="spacer"></div>
+  <a href="https://github.com/thefoeyouknow/NeoKey-WLED-Commander/blob/main/USER_GUIDE.md" target="_blank" style="text-decoration:none; margin-bottom:1rem;">
+    <div class="nav-item" style="color:var(--primary); font-size:0.85rem; padding:0.5rem 1rem;">Help & Documentation ↗</div>
+  </a>
   <button class="save-btn" onclick="saveConfig()">Save All</button>
 </aside>
 
