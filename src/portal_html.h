@@ -377,7 +377,7 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
 
 <script>
 // --- State ---
-let config = { ssids:[], passwords:[], wleds:[], presets:[1,2,3,4], actBri:191, inaBri:64, fbStyle:1 };
+let config = { ssids:[], passwords:[], wleds:[], presets:[1,2,3,4], actBri:191, inaBri:26, fbStyle:1 };
 let selectedKey = -1;
 
 // --- Navigation ---
