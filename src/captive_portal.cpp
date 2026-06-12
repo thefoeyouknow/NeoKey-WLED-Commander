@@ -68,8 +68,6 @@ static void handleScanWled() {
 }
 
 static void handleGetConfig() {
-    WledConfig cfg;
-    loadConfig(cfg);
     String json = "{";
     
     json += "\"ssids\":[";
@@ -95,6 +93,12 @@ static void handleGetConfig() {
     for(int i=0; i<4; i++) {
         if(i > 0) json += ",";
         json += String(cfg.presetIds[i]);
+    }
+    json += "],\"autoMap\":" + String(cfg.autoMapPresets ? "true" : "false");
+    json += ",\"labels\":[";
+    for(int i=0; i<4; i++) {
+        if(i > 0) json += ",";
+        json += "\"" + escapeJson(cfg.presetLabels[i]) + "\"";
     }
     json += "]}";
     webServer.send(200, "application/json", json);
@@ -136,9 +140,6 @@ static void handlePress() {
 }
 
 static void handleSave() {
-    // Load existing config to avoid wiping untouched fields
-    WledConfig cfg;
-    loadConfig(cfg);
 
     String mode = webServer.arg("mode");
     cfg.apMode = (mode == "adhoc");
@@ -206,9 +207,17 @@ static void handleSave() {
     }
     for (int i=0; i<4; i++) {
         String argName = "preset" + String(i);
+        String lblName = "lbl" + String(i);
         if (webServer.hasArg(argName)) {
             cfg.presetIds[i] = webServer.arg(argName).toInt();
         }
+        if (webServer.hasArg(lblName)) {
+            cfg.presetLabels[i] = webServer.arg(lblName);
+        }
+    }
+    
+    if (webServer.hasArg("autoMap")) {
+        cfg.autoMapPresets = (webServer.arg("autoMap") == "true");
     }
 
     // Validate minimums

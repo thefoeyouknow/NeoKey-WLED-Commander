@@ -46,11 +46,15 @@ bool loadConfig(WledConfig& cfg) {
         cfg.wledAddresses[i] = prefs.getString(key, "");
     }
 
+    cfg.autoMapPresets = prefs.getBool("autoMap", true);
+    
     int defaults[] = DEFAULT_PRESET_IDS;
     for (int i = 0; i < PRESET_COUNT; i++) {
-        char key[8];
+        char key[8], lblKey[8];
         snprintf(key, sizeof(key), "pid%d", i);
+        snprintf(lblKey, sizeof(lblKey), "lbl%d", i);
         cfg.presetIds[i] = prefs.getInt(key, defaults[i]);
+        cfg.presetLabels[i] = prefs.getString(lblKey, "");
     }
 
     cfg.ledActiveBri   = prefs.getUChar("actBri",  LED_ACTIVE_BRIGHTNESS);
@@ -95,10 +99,14 @@ void saveConfig(const WledConfig& cfg) {
         }
     }
 
+    prefs.putBool("autoMap", cfg.autoMapPresets);
+
     for (int i = 0; i < PRESET_COUNT; i++) {
-        char key[8];
+        char key[8], lblKey[8];
         snprintf(key, sizeof(key), "pid%d", i);
+        snprintf(lblKey, sizeof(lblKey), "lbl%d", i);
         prefs.putInt(key, cfg.presetIds[i]);
+        prefs.putString(lblKey, cfg.presetLabels[i]);
     }
 
     prefs.putUChar("actBri",  cfg.ledActiveBri);

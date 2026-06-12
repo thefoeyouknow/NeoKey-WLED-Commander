@@ -12,7 +12,9 @@
 // fetchPresetColors — GET /json/presets, extract 4 lowest presets + colors
 // ---------------------------------------------------------------------------
 bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
-                           uint32_t colorsOut[PRESET_COUNT]) {
+                           uint32_t colorsOut[PRESET_COUNT],
+                           String presetLabelsOut[PRESET_COUNT],
+                           bool autoMap) {
 
   String url = "http://" + ip.toString() + "/presets.json";
   Serial.printf("[WLED] Fetching presets from %s\n", url.c_str());
@@ -43,8 +45,30 @@ bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
     return false;
   }
 
-  // We no longer overwrite presetIdsOut with the lowest presets from the device.
-  // The user explicitly maps keys to presets. We just read the colors for them.
+  JsonObject root = doc.as<JsonObject>();
+  
+  if (autoMap) {
+    std::vector<int> allPresets;
+    for (JsonPair kv : root) {
+      int id = String(kv.key().c_str()).toInt();
+      if (id > 0) { // WLED user presets start at 1
+        allPresets.push_back(id);
+      }
+    }
+
+    if (!allPresets.empty()) {
+      std::sort(allPresets.begin(), allPresets.end());
+      for (int i = 0; i < PRESET_COUNT; i++) {
+        if (i < allPresets.size()) {
+          presetIdsOut[i] = allPresets[i];
+        } else {
+          presetIdsOut[i] = allPresets.back();
+        }
+      }
+    }
+  }
+
+  // Now extract their colors and labels
 
   // Now extract their colors
   for (int i = 0; i < PRESET_COUNT; i++) {
@@ -54,7 +78,15 @@ bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
     JsonObject preset = doc[idStr];
     if (preset.isNull()) {
       colorsOut[i] = 0xFFFFFF;
+      if (presetLabelsOut[i].isEmpty()) presetLabelsOut[i] = "P" + String(presetIdsOut[i]);
       continue;
+    }
+
+    // Assign label from WLED if not customized by user
+    if (presetLabelsOut[i].isEmpty() && preset.containsKey("n")) {
+      presetLabelsOut[i] = preset["n"].as<String>();
+    } else if (presetLabelsOut[i].isEmpty()) {
+      presetLabelsOut[i] = "P" + String(presetIdsOut[i]);
     }
 
     JsonArray col;

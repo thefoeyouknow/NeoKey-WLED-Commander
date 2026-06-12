@@ -295,6 +295,14 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
     <h2>Visual Key Mapper</h2>
     <p style="color:var(--text-muted); margin-bottom: 1.5rem;">Click a physical key below to assign its WLED preset ID.</p>
     
+    <div style="margin-bottom: 1.5rem; background: var(--bg-surface-hover); padding: 1rem; border-radius: 8px;">
+      <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+        <input type="checkbox" id="autoMap" onchange="updateAutoMap()">
+        <strong>Automatically assign the 4 lowest WLED presets</strong>
+      </label>
+      <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem; margin-left:1.5rem;">If unchecked, you can manually override the preset IDs. Custom labels are always supported.</p>
+    </div>
+
     <div class="macropad">
       <div class="key" onclick="selectKey(0)">0<div class="key-badge" id="badge0">P1</div></div>
       <div class="key" onclick="selectKey(1)">1<div class="key-badge" id="badge1">P2</div></div>
@@ -306,7 +314,11 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
       <h3 id="edit-title">Edit Key 0</h3>
       <div class="form-group">
         <label>WLED Preset ID</label>
-        <input type="number" id="edit-preset" min="1" max="250" onchange="updatePreset()">
+        <input type="number" id="edit-preset" min="1" max="250" oninput="updatePreset()">
+      </div>
+      <div class="form-group" style="margin-top:1rem;">
+        <label>Custom Label (Optional)</label>
+        <input type="text" id="edit-label" maxlength="12" placeholder="e.g. Sunset" oninput="updatePreset()">
       </div>
     </div>
   </div>
@@ -377,7 +389,7 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
 
 <script>
 // --- State ---
-let config = { ssids:[], passwords:[], wleds:[], presets:[1,2,3,4], actBri:191, inaBri:26, fbStyle:1 };
+let config = { ssids:[], passwords:[], wleds:[], presets:[1,2,3,4], labels:['','','',''], autoMap:true, actBri:191, inaBri:26, fbStyle:1 };
 let selectedKey = -1;
 
 // --- Navigation ---
@@ -481,8 +493,10 @@ function renderSystem() {
 }
 
 function renderMapper() {
+  document.getElementById('autoMap').checked = config.autoMap;
   for(let i=0; i<4; i++) {
-    document.getElementById('badge'+i).innerText = 'P' + config.presets[i];
+    let lbl = config.labels[i] ? config.labels[i] : 'P' + config.presets[i];
+    document.getElementById('badge'+i).innerText = lbl;
   }
 }
 
@@ -494,12 +508,20 @@ function selectKey(k) {
   document.getElementById('key-editor').style.display = 'block';
   document.getElementById('edit-title').innerText = 'Edit Key ' + k;
   document.getElementById('edit-preset').value = config.presets[k];
+  document.getElementById('edit-label').value = config.labels[k] || '';
+  document.getElementById('edit-preset').disabled = config.autoMap;
 }
 
 function updatePreset() {
   if(selectedKey < 0) return;
-  config.presets[selectedKey] = parseInt(document.getElementById('edit-preset').value);
+  config.presets[selectedKey] = parseInt(document.getElementById('edit-preset').value) || 1;
+  config.labels[selectedKey] = document.getElementById('edit-label').value;
   renderMapper();
+}
+
+function updateAutoMap() {
+  config.autoMap = document.getElementById('autoMap').checked;
+  document.getElementById('edit-preset').disabled = config.autoMap;
 }
 
 function addWifi() { config.ssids.push(''); config.passwords.push(''); renderNetwork(); }
@@ -555,7 +577,11 @@ async function saveConfig() {
   let fb = document.querySelector('input[name="fbStyle"]:checked');
   if(fb) fd.append('fbStyle', fb.value);
   
-  for(let i=0; i<4; i++) fd.append('preset'+i, config.presets[i]);
+  fd.append('autoMap', config.autoMap);
+  for(let i=0; i<4; i++) {
+    fd.append('preset'+i, config.presets[i]);
+    fd.append('lbl'+i, config.labels[i] || '');
+  }
   
   try {
     let r = await fetch('/save', { method:'POST', body:fd });

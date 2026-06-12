@@ -12,7 +12,9 @@
 // colorsOut[] receives packed 0xRRGGBB values.
 // Returns true on success.
 bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
-                           uint32_t colorsOut[PRESET_COUNT]);
+                           uint32_t colorsOut[PRESET_COUNT],
+                           String presetLabelsOut[PRESET_COUNT],
+                           bool autoMap);
 
 // Activate a WLED preset by ID across multiple devices.
 // Returns true if at least one HTTP request succeeded.

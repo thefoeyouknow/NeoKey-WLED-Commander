@@ -14,7 +14,7 @@
 // ============================================================================
 
 // --- Runtime state ---
-static WledConfig cfg;
+WledConfig cfg;
 static uint32_t presetColors[NUM_KEYS] = {0};
 static int activePresetId = -1;
 static unsigned long lastPollTime = 0;
@@ -157,7 +157,7 @@ static bool fetchColorsWithRetry(int maxRetries) {
     Serial.printf("[WLED] Fetching preset colors (attempt %d/%d)...\n",
                   attempt + 1, maxRetries);
 
-    if (wledFetchPresetColors(ip, cfg.presetIds, presetColors)) {
+    if (wledFetchPresetColors(ip, cfg.presetIds, presetColors, cfg.presetLabels, cfg.autoMapPresets)) {
       return true;
     }
 
@@ -230,7 +230,7 @@ static void pollWledState() {
 
     if (!presetsFetched) {
       Serial.println("[Sync] Retrying preset fetch...");
-      if (wledFetchPresetColors(ip, cfg.presetIds, presetColors)) {
+      if (wledFetchPresetColors(ip, cfg.presetIds, presetColors, cfg.presetLabels, cfg.autoMapPresets)) {
         presetsFetched = true;
 
         // Play success animation then enter running state
@@ -256,7 +256,7 @@ static void pollWledState() {
     // Re-fetch preset colors every poll to catch live edits
     uint32_t newColors[NUM_KEYS] = {0};
     bool colorsChanged = false;
-    if (wledFetchPresetColors(ip, cfg.presetIds, newColors)) {
+    if (wledFetchPresetColors(ip, cfg.presetIds, newColors, cfg.presetLabels, cfg.autoMapPresets)) {
       for (int i = 0; i < NUM_KEYS; i++) {
         if (newColors[i] != presetColors[i]) {
           colorsChanged = true;
