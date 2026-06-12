@@ -15,6 +15,7 @@
 extern void sysSimulateKeyPress(uint8_t key);
 extern int sysGetActivePresetId();
 extern uint32_t sysGetPresetColor(uint8_t key);
+extern bool sysIsOtaPending();
 
 // ============================================================================
 // Captive Portal Implementation
@@ -117,6 +118,7 @@ static void handleStatus() {
     }
     json += "]";
     json += ",\"bg\":" + String(_isBackground ? "true" : "false");
+    json += ",\"ota\":" + String(sysIsOtaPending() ? "true" : "false");
     json += "}";
     webServer.send(200, "application/json", json);
 }

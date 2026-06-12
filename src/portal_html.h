@@ -219,6 +219,23 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
   .scan-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
   .scan-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-base); border: 1px solid var(--border); border-radius: 6px; }
   
+  /* OTA Banner */
+  .ota-banner {
+    display: none;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .ota-banner:hover { background: rgba(56, 189, 248, 0.25); }
+  
   /* OTA Progress */
   #ota-progress-container { display: none; margin-top: 1rem; }
   #ota-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
@@ -251,6 +268,9 @@ const char PORTAL_HTML[] PROGMEM = R"rawliteral(
 
   <!-- DASHBOARD -->
   <div id="tab-dash" class="tab-content active">
+    <div class="ota-banner" id="ota-banner" onclick="nav('system')">
+      ✨ A new firmware update is available! Long press Key 0 on the device to install, or click here to flash it manually.
+    </div>
     <h2>Dashboard</h2>
     <div class="grid">
       <div class="card">
@@ -387,6 +407,13 @@ async function fetchStatus() {
     document.getElementById('st-ram').innerText = (d.heap/1024).toFixed(1) + ' KB';
     document.getElementById('st-up').innerText = d.uptime + ' s';
     document.getElementById('st-fw').innerText = 'v' + d.fw;
+    
+    // OTA banner
+    if (d.ota) {
+      document.getElementById('ota-banner').style.display = 'block';
+    } else {
+      document.getElementById('ota-banner').style.display = 'none';
+    }
     
     // Update monitor keys
     if(d.keyColors && config.presets) {
