@@ -3,7 +3,7 @@
 // NeoKey WLED Commander — Compile-time Configuration
 // ============================================================================
 
-#define FW_VERSION              "1.03"
+#define FW_VERSION              "1.04"
 
 // ---------------------------------------------------------------------------
 // NeoKey Hardware
