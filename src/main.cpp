@@ -252,9 +252,26 @@ static void pollWledState() {
       return;
     }
 
-    if (polledPreset != activePresetId) {
-      Serial.printf("[Sync] Active preset: %d -> %d\n", activePresetId,
-                    polledPreset);
+    // Re-fetch preset colors every poll to catch live edits
+    uint32_t newColors[NUM_KEYS] = {0};
+    bool colorsChanged = false;
+    if (wledFetchPresetColors(ip, cfg.presetIds, newColors)) {
+      for (int i = 0; i < NUM_KEYS; i++) {
+        if (newColors[i] != presetColors[i]) {
+          colorsChanged = true;
+          presetColors[i] = newColors[i];
+        }
+      }
+    }
+
+    if (polledPreset != activePresetId || colorsChanged) {
+      if (polledPreset != activePresetId) {
+        Serial.printf("[Sync] Active preset: %d -> %d\n", activePresetId,
+                      polledPreset);
+      }
+      if (colorsChanged) {
+        Serial.println("[Sync] Preset colors updated.");
+      }
       activePresetId = polledPreset;
       applyRunningState(activePresetId, cfg.presetIds, presetColors);
     }
