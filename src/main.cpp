@@ -55,6 +55,7 @@ static void onKeyEvent(uint8_t keyIndex, bool isPressed) {
     } else {
       if (_otaPending) {
         unsigned long duration = millis() - _key0PressStartMillis;
+        if (duration < 30) return; // Ignore mechanical bounce
         if (duration >= 1500) {
           Serial.println("[OTA] Key 0 long press detected. Starting update...");
           animStartOtaUpdating();
