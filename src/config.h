@@ -3,7 +3,7 @@
 // NeoKey WLED Commander — Compile-time Configuration
 // ============================================================================
 
-#define FW_VERSION              "1.06"
+#define FW_VERSION              "1.07"
 
 // ---------------------------------------------------------------------------
 // NeoKey Hardware
@@ -32,7 +32,7 @@
 // WLED Preset Mapping
 // ---------------------------------------------------------------------------
 #define PRESET_COUNT            4
-#define DEFAULT_PRESET_IDS      {0, 0, 0, 0}   // Initially 0, dynamically populated
+#define DEFAULT_PRESET_IDS      {1, 2, 3, 4}   // Initially 1, 2, 3, 4, dynamically populated
 
 // ---------------------------------------------------------------------------
 // NeoPixel Brightness (0-255)

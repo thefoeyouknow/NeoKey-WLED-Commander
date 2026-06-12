@@ -43,33 +43,8 @@ bool wledFetchPresetColors(IPAddress ip, int presetIdsOut[PRESET_COUNT],
     return false;
   }
 
-  // Extract all keys (preset IDs)
-  std::vector<int> allPresets;
-  JsonObject root = doc.as<JsonObject>();
-  for (JsonPair kv : root) {
-    int id = String(kv.key().c_str()).toInt();
-    if (id > 0) { // WLED user presets start at 1. 0 is a system placeholder.
-      allPresets.push_back(id);
-    }
-  }
-
-  if (allPresets.empty()) {
-    Serial.println("[WLED] No presets found on device.");
-    return false;
-  }
-
-  // Sort to find the numerically lowest ones
-  std::sort(allPresets.begin(), allPresets.end());
-
-  // Map up to PRESET_COUNT lowest IDs
-  for (int i = 0; i < PRESET_COUNT; i++) {
-    if (i < allPresets.size()) {
-      presetIdsOut[i] = allPresets[i];
-    } else {
-      // Not enough presets, pad with the last known one
-      presetIdsOut[i] = allPresets.back();
-    }
-  }
+  // We no longer overwrite presetIdsOut with the lowest presets from the device.
+  // The user explicitly maps keys to presets. We just read the colors for them.
 
   // Now extract their colors
   for (int i = 0; i < PRESET_COUNT; i++) {

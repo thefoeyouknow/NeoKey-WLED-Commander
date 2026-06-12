@@ -14,7 +14,7 @@ struct WledConfig {
     String wledAddresses[MAX_WLED_DEVICES]; // mDNS name or IP for up to 5 devices
     uint8_t numWleds;                       // Number of bonded WLEDs
     bool   apMode;                          // true = Ad-Hoc (connect to WLED AP)
-    int    presetIds[4];                    // Dynamically populated preset IDs
+    int    presetIds[4] = {1, 2, 3, 4};     // Dynamically populated preset IDs
     uint8_t ledActiveBri;                   // Active key brightness (0-255)
     uint8_t ledInactiveBri;                 // Inactive key brightness (0-255)
     uint8_t ledFeedbackStyle;               // 0 = Solid, 1 = Smooth Fade, 2 = Flash
